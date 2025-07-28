@@ -1,0 +1,14 @@
+{
+  "id": "aao",
+  "name": "Alpha & Omega",
+  "display_name": "Alpha & Omega",
+  "author": ["@sxeif_"],
+  "description": "flip side",
+  "prefix": "aao_p",
+  "main_file": "aao_main.lua",
+  "priority": 0,
+  "badge_colour": "FFFFFF",
+  "badge_text_colour": "000000",
+  "version": "0.1.0",
+  "dependencies": []
+}
