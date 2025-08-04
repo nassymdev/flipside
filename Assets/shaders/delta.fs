@@ -4,8 +4,8 @@
     #define MY_HIGHP_OR_MEDIUMP mediump
 #endif
 
-// External parameters
-extern MY_HIGHP_OR_MEDIUMP vec2 delta;  // Mouse position
+
+extern MY_HIGHP_OR_MEDIUMP vec2 delta;  
 extern MY_HIGHP_OR_MEDIUMP number dissolve;
 extern MY_HIGHP_OR_MEDIUMP number time;
 extern MY_HIGHP_OR_MEDIUMP vec4 texture_details;
@@ -14,7 +14,7 @@ extern bool shadow;
 extern MY_HIGHP_OR_MEDIUMP vec4 burn_colour_1;
 extern MY_HIGHP_OR_MEDIUMP vec4 burn_colour_2;
 
-// Dissolve effect function (unchanged from original)
+
 vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
 {
     if (dissolve < 0.001) {
@@ -52,51 +52,51 @@ vec4 dissolve_mask(vec4 tex, vec2 texture_coords, vec2 uv)
     return vec4(shadow ? vec3(0.,0.,0.) : tex.xyz, res > adjusted_dissolve ? (shadow ? tex.a*0.3: tex.a) : .0);
 }
 
-// Main fragment shader
+
 vec4 effect(vec4 colour, Image texture, vec2 texture_coords, vec2 screen_coords)
 {
-    // Get texture color
+
     vec4 tex = Texel(texture, texture_coords);
     vec2 uv = (((texture_coords)*(image_details)) - texture_details.xy*texture_details.ba)/texture_details.ba;
     
-    // Grid parameters with delta influence
-    float baseGridSize = 0.08;  // Base grid cell size
-    float gridSize = baseGridSize * (1.0 + 0.1 * sin(delta.y * 0.01));  // Vertical mouse affects size
+
+    float baseGridSize = 0.08; 
+    float gridSize = baseGridSize * (1.0 + 0.1 * sin(delta.y * 0.01));  
     
-    float lineWidth = 0.006 + 0.002 * sin(delta.x * 0.01);  // Thick lines with horizontal mouse variation
+    float lineWidth = 0.006 + 0.002 * sin(delta.x * 0.01);  
     
-    // Slow movement with mouse influence
+    
     float baseSpeed = 0.08;
     float speedX = baseSpeed * (1.0 + 0.2 * sin(delta.x * 0.005));
     float speedY = baseSpeed * (1.0 + 0.2 * cos(delta.y * 0.005));
     
-    // Create grid lines
+    
     float vLines = smoothstep(lineWidth, 0.0, 
         abs(mod(uv.x + time * speedX + delta.x * 0.0003, gridSize) - gridSize * 0.5));
     float hLines = smoothstep(lineWidth, 0.0, 
         abs(mod(uv.y + time * speedY + delta.y * 0.0003, gridSize) - gridSize * 0.5));
     
-    // Pure purple color
+    
     vec3 gridColor = vec3(0.7, 0.2, 0.9);
     float gridIntensity = max(vLines, hLines) * 0.8;
     vec3 gridEffect = gridColor * gridIntensity;
     
-    // Invert colors (original effect)
+    
     tex.xyz = vec3(1.) - tex.xyz;
     
-    // Add grid effect
+    
     tex.xyz += gridEffect;
     
-    // Mild color channel adjustments
+    
     tex.x *= 0.9;
     tex.y *= 0.8;
     tex.z *= 0.7;
     
-    // Apply dissolve effect
+    
     return dissolve_mask(tex * colour, texture_coords, uv);
 }
 
-// Vertex shader (unchanged from original)
+
 extern MY_HIGHP_OR_MEDIUMP vec2 mouse_screen_pos;
 extern MY_HIGHP_OR_MEDIUMP float hovering;
 extern MY_HIGHP_OR_MEDIUMP float screen_scale;
